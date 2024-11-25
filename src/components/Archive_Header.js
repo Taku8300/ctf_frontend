@@ -20,7 +20,7 @@ const Header = () => {
   };
 
   const navigateToScore = () => {
-    router.push('/User_score'); // 遷移先のパス
+    router.push('/Archive_score'); // 遷移先のパス
   };
 
   const navigateToTop = () => {
@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   const navigateToQuestion = () => {
-    router.push('/User_question'); // 遷移先のパス
+    router.push('/Archive_ques'); // 遷移先のパス
   };
 
   const handleLogout = () => {
