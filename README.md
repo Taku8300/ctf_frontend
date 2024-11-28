@@ -1,6 +1,9 @@
 ## 現在のバージョン
+
 ## Node.js: v20.18.0
+
 ## React: 18.3.1
+
 ## Recharts: 2.13.3
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).

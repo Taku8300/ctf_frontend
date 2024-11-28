@@ -20,7 +20,7 @@ const Header = () => {
   };
 
   const navigateToScore = () => {
-    router.push('/User_score'); // 遷移先のパス
+    router.push('/Archive_score'); // 遷移先のパス
   };
 
   const navigateToTop = () => {
@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   const navigateToQuestion = () => {
-    router.push('/User_question'); // 遷移先のパス
+    router.push('/Archive_ques'); // 遷移先のパス
   };
 
   const handleLogout = () => {
@@ -102,6 +102,7 @@ const Header = () => {
             )}
           </div>
         </div>
+
         <Image src={Wavy} className="absolute bottom-0 w-full" alt=""/> {/* 画像も全幅 */}
       </div>
     </div>

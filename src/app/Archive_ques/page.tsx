@@ -1,7 +1,7 @@
 'use client';
  
 import React, { useState } from 'react';
-import Header from "../../components/Header";
+import Header from "../../components/Archive_Header";
  
 const QBt_u = () => {
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null); // 選択されたカードのIDを保存
