@@ -8,6 +8,7 @@ function Tournament({ number, title, startDate, endDate }) {
   const currentDate = new Date();
   const start = new Date(startDate);
   const end = new Date(endDate);
+  console.log(startDate)
 
   // Determine tournament status
   const isUpcoming = currentDate < start;

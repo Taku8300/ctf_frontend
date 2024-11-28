@@ -10,15 +10,37 @@ const Login = () => {
   function LoginPopup() {
     const router = useRouter();
     const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
+    const [password, setName] = useState('');
 
-    const handleLogin = () => {
-      // ログイン処理（例: 入力チェックなど）
-      if (email && name) {
-        // ログインが完了した場合、フラグをセット
-        localStorage.setItem('hasLoggedIn', 'true');
-        // ルートページにリダイレクト
-        router.push('/');
+    const handleLogin = async () => {
+      // ログイン処理
+      if (email && password) {
+        try {
+          const response = await fetch('http://localhost/authn/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include', // クッキーを含める
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            alert(`ログインに失敗しました: ${errorData.error}`);
+            return;
+          }
+
+          const data = await response.json();
+          localStorage.setItem('hasLoggedIn', 'true');
+          // ログイン成功後にリダイレクト
+          router.push('/');
+        } catch (error) {
+          console.error('ログインエラー:', error);
+          alert('ログイン中にエラーが発生しました');
+        }
+      } else {
+        alert('メールアドレスとパスワードを入力してください');
       }
     };
 
@@ -40,7 +62,7 @@ const Login = () => {
             <label className="block text-gray-700">Name</label>
             <input
               type="text"
-              value={name}
+              value={password}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
               placeholder="Enter your name"
