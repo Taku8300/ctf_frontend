@@ -87,7 +87,7 @@ const Header = () => {
           </div>
         </div>
 
-        <Image src={Wavy} className="absolute bottom-0 w-full" /> {/* 画像も全幅 */}
+        <Image src={Wavy} className="absolute bottom-0 w-full" alt=''/> {/* 画像も全幅 */}
       </div>
     </div>
   );

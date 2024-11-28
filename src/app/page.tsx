@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Header from "../components/Header";
 import Tournament from '../components/Tornament';
 
+
+
 export default function Page() {
   const router = useRouter();
 
@@ -50,6 +52,7 @@ export default function Page() {
 
   return (
     <div>
+
       <Header />
       {tournaments.map((tournament) => (
         <Tournament
