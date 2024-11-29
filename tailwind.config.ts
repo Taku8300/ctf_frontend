@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import lineClamp from "@tailwindcss/line-clamp"; // Import the plugin
 
 const config: Config = {
   content: [
@@ -14,6 +15,10 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  safelist: ['w-[300px]', 'h-[280px]'], // Example safelist (add more if needed)
+  plugins: [
+    lineClamp, // Use the imported plugin
+  ],
 };
+
 export default config;
