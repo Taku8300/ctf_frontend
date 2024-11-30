@@ -12,7 +12,6 @@ interface Card {
 
 }
 
-
 // カード情報（変数化）
 const CARD_DATA = [
   { id: 1, status: '解決', title: '大量Pod問題', text: 'kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！',Point:'10' },
