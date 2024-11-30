@@ -1,23 +1,69 @@
 'use client';
  
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import Header from "../../components/Header";
- 
+import { useRouter } from 'next/navigation';
+
+interface Card {
+  id: number;
+  status: string;
+  text: string;
+  categoryName: string
+
+}
+
 const QBt_u = () => {
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null); // 選択されたカードのIDを保存
   const [flagValues, setFlagValues] = useState<{ [key: number]: string }>({}); // 各カードのFlag値を保存
- 
-  const cards = [
-    { id: 1, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 2, status: '未解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 3, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 4, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 5, status: '未解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 6, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 7, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 8, status: '未解決', text: 'kubernetesの中にpod大量発生！！！！' },
-    { id: 9, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
-  ];
+  const [cards,setcards] = useState<Card[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchAPI = async () => {
+      try {
+        const response = await fetch('http://localhost/question/1', {
+          method: 'GET',
+          credentials: 'include', // クッキーを含める
+        });
+        console.log(response.status)
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.log(`api error: ${errorData.error}`)
+          if (response.status == 401) {
+            router.push('/Login');
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data:  any[] = await response.json();
+        const transformedData: Card[]  = data.map(item => ({
+          id : item.id,
+          text: item.name,
+          status: item.status,
+          categoryName: item.category_name
+        }));
+        console.log(data)
+        setcards(transformedData);
+      } catch (err) {
+        // setError('API呼び出し中にエラーが発生しました。');
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchAPI();
+  }, []);
+
+  // const cards = [
+  //   { id: 1, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 2, status: '未解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 3, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 4, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 5, status: '未解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 6, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 7, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 8, status: '未解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  //   { id: 9, status: '解決', text: 'kubernetesの中にpod大量発生！！！！' },
+  // ];
  
   const handleCardClick = (id: number): void => {
     setSelectedCardId(id);
@@ -33,6 +79,7 @@ const QBt_u = () => {
  
   const handleSubmitFlag = (): void => {
     if (selectedCardId !== null) {
+      
       const flag = flagValues[selectedCardId];
       console.log(`Card ID: ${selectedCardId}, Flag: ${flag}`);
       alert(`Flag submitted for Card ${selectedCardId}: ${flag}`);
@@ -99,6 +146,7 @@ const QBt_u = () => {
       {/* 問題詳細 */}
       <div className="flex-1 overflow-y-auto mb-6 p-4 text-lg text-gray-800 bg-white rounded-xl shadow-inner border border-gray-300 whitespace-pre-wrap leading-relaxed">
         Li0uLi4uMC4iMjAtJT...（省略）
+        {}
       </div>
 
       {/* Flag入力 */}

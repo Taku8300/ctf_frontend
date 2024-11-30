@@ -68,7 +68,6 @@ export default function Page() {
 
   return (
     <div>
-
       <Header />
       {tournaments.map((tournament) => (
         <Tournament
