@@ -46,7 +46,7 @@ const Chart = () => {
       </div>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={data} className="bg-white p-6 rounded-lg shadow-lg">
-          {Object.keys(data[0] || {}).filter(key => key !== "name").map((team, index) => (
+          {Object.keys(data[0] || {}).filter(key => key !== "name").map((team) => (
             <Line
               key={team}
               type="monotone"
