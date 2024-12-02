@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Header from "../../components/Header";
 
 const Login = () => {
-  const [showPopup, setShowPopup] = useState(true); // ポップアップ表示のトリガー
+  const [showPopup,] = useState(true); // ポップアップ表示のトリガー
 
   function LoginPopup() {
     const router = useRouter();
