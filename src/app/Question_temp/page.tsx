@@ -1,21 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuestionContext } from "../../context/QuestionContext";
 import Header from "../../components/Admin_header";
 
 const Question_temp = () => {
   const router = useRouter();
-  const { addQuestions } = useQuestionContext();
+  const [templates, setTemplates] = useState<{ id: number; text: string }[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const templates = [
-    { id: 1, text: "テンプレート 1" },
-    { id: 2, text: "テンプレート 2" },
-    { id: 3, text: "テンプレート 3" },
-    { id: 4, text: "テンプレート 4" },
-  ];
+  // デモデータを模したテンプレート取得処理
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      // デモデータ
+      const demoTemplates = [
+        { id: 1, text: "テンプレート 1" },
+        { id: 2, text: "テンプレート 2" },
+        { id: 3, text: "テンプレート 3" },
+        { id: 4, text: "テンプレート 4" },
+        { id: 5, text: "テンプレート 5" },
+        { id: 6, text: "テンプレート 6" },
+        { id: 7, text: "テンプレート 7" },
+        { id: 8, text: "テンプレート 8" },
+        { id: 9, text: "テンプレート 9" },
+        { id: 10, text: "テンプレート 10" },
+        { id: 11, text: "テンプレート 11" },
+        { id: 12, text: "テンプレート 12" },
+      ];
+      setTemplates(demoTemplates); // テンプレートデータをステートに設定
+    };
+    fetchTemplates();
+  }, []);
 
   const toggleSelection = (id: number) => {
     setSelectedIds((prev) =>
@@ -25,7 +40,8 @@ const Question_temp = () => {
 
   const handleConfirm = () => {
     const selectedTemplates = templates.filter((t) => selectedIds.includes(t.id));
-    addQuestions(selectedTemplates); // 状態を更新
+    console.log("選択されたテンプレート:", selectedTemplates); // デバッグ用
+    localStorage.setItem("selectedTemplates", JSON.stringify(selectedTemplates)); // 選択テンプレートをlocalStorageに保存
     router.push("/Edit_question"); // ページ遷移
   };
 
@@ -46,15 +62,12 @@ const Question_temp = () => {
               }`}
               style={{ boxShadow: "8px 8px 0px #FFB6B9" }}
             >
-              <h2 className="text-2xl font-bold mb-4 text-black">
-                テンプレート {template.id}
-              </h2>
+              <h2 className="text-2xl font-bold mb-4 text-black">テンプレート {template.id}</h2>
               <p className="text-lg text-black">{template.text}</p>
             </div>
           ))}
         </div>
 
-        {/* 決定ボタン */}
         <button
           onClick={handleConfirm}
           className="fixed bottom-4 right-4 bg-teal-500 px-6 py-3 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:bg-teal-600 hover:scale-105"
