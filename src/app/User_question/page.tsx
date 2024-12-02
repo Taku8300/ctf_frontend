@@ -5,7 +5,7 @@ import Header from "../../components/Header";
 
 // カード情報（変数化）
 const CARD_DATA = [
-  { id: 1, status: '解決', title: '大量Pod問題', text: 'kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！kubernetesの中にpod大量発生！！！！',Point:'10' },
+  { id: 1, status: '解決', title: '大量Pod問題', text: 'kubernetesの中にpod大量発生！！！！',Point:'10' },
   { id: 2, status: '未解決', title: 'スケール問題', text: 'podのスケールが壊れた！どうしよう！',Point:'10' },
   { id: 3, status: '解決', title: 'ノード不足', text: 'ノード不足でクラッシュしたけど直したよ！',Point:'10'},
   { id: 4, status: '解決', title: '新サービス', text: 'kubernetesで新しいサービス作成中！',Point:'10' },
