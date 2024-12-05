@@ -69,7 +69,7 @@ export default function AdminTop() {
 
       {/* コンテンツ */}
       <main className="flex-grow p-10">
-        <h1 className="text-2xl font-bold mb-6">トーナメント一覧</h1>
+        <h1 className="text-2xl font-bold mb-6">コンテスト一覧</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tournaments.map((tournament) => (
             <div
@@ -104,12 +104,12 @@ export default function AdminTop() {
             </div>
           ))}
         </div>
-        {/* 「トーナメントを作成」ボタン */}
+        {/* 「コンテストを作成」ボタン */}
         <button
           onClick={handleCreateTournament}
           className="fixed bottom-10 right-10 bg-teal-400 text-white p-4 rounded-full shadow-lg hover:scale-105"
         >
-          トーナメントを作成
+          コンテストを作成
         </button>
       </main>
 

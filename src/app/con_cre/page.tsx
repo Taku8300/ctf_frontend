@@ -42,7 +42,7 @@ export default function TournamentCreate() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* ヘッダー */}
       <header className="bg-teal-400 p-5 text-white text-3xl font-bold">
-        トーナメント作成
+        コンテスト作成
       </header>
 
       {/* フォーム */}
@@ -51,9 +51,9 @@ export default function TournamentCreate() {
           onSubmit={handleSubmit}
           className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full"
         >
-          <h1 className="text-2xl font-bold mb-6">新しいトーナメントを作成</h1>
+          <h1 className="text-2xl font-bold mb-6">新しいコンテストを作成</h1>
           <div className="mb-4">
-            <label className="block text-gray-600 mb-2">トーナメント名</label>
+            <label className="block text-gray-600 mb-2">コンテスト名</label>
             <input
               type="text"
               className="border border-gray-300 rounded-lg p-2 w-full"
