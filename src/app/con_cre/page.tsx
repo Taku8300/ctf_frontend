@@ -3,36 +3,36 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function ContestCreate() {
+export default function TournamentCreate() {
   const router = useRouter();
 
   // フォームの状態
-  const [contestName, setContestName] = useState("");
+  const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   // フォーム送信処理
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // バリデーションチェック
-    if (!contestName || !startDate || !endDate) {
+    if (!title || !startDate || !endDate) {
       alert("全ての項目を入力してください。");
       return;
     }
 
-    // 仮のデータ保存処理 (localStorage などを使用して実装する)
-    const newContest = {
-      id: Date.now(),
-      name: contestName,
-      status: "開催予定",
-      startDate: startDate,
-      endDate: endDate,
+    // 新しいトーナメントデータの作成
+    const newTournament = {
+      number: Date.now(), // 一意な番号を現在のタイムスタンプで生成
+      title,
+      startDate,
+      endDate,
     };
 
-    const contests = JSON.parse(localStorage.getItem("contests") || "[]");
-    contests.push(newContest);
-    localStorage.setItem("contests", JSON.stringify(contests));
+    // 既存のトーナメント一覧を取得して追加
+    const tournaments = JSON.parse(localStorage.getItem("tournaments") || "[]");
+    tournaments.push(newTournament);
+    localStorage.setItem("tournaments", JSON.stringify(tournaments));
 
     // admin_top に遷移
     router.push("/admin_top");
@@ -57,8 +57,8 @@ export default function ContestCreate() {
             <input
               type="text"
               className="border border-gray-300 rounded-lg p-2 w-full"
-              value={contestName}
-              onChange={(e) => setContestName(e.target.value)}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
           <div className="mb-4">

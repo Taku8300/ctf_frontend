@@ -1,7 +1,7 @@
 "use client"; // クライアントコンポーネントとして宣言
 
 import React from "react";
-import Header from "../../components/Header_Amin"; // ヘッダーコンポーネントをインポート
+import Header from "../../components/Header_Admin"; // ヘッダーコンポーネントをインポート
 import { useRouter } from "next/navigation"; // ルーターをインポート
 
 export default function AdminPage() {
