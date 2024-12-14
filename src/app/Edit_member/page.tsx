@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import Header from "../../components/Admin_header";
 
 const Edit_member = () => {
@@ -186,8 +186,6 @@ const Edit_member = () => {
                     </button>
                 </div>
                 </div>
-
-
           </>
         )}
       </div>

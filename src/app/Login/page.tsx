@@ -30,7 +30,6 @@ const Login = () => {
             alert(`ログインに失敗しました: ${errorData.error}`);
             return;
           }
-
           const data = await response.json();
           localStorage.setItem('hasLoggedIn', 'true');
           // ログイン成功後にリダイレクト

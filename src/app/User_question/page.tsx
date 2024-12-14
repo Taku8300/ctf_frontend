@@ -9,7 +9,7 @@ interface Card {
   status: string;
   text: string;
   categoryName: string
-
+  point: number,
 }
 
 // カード情報（変数化）
@@ -27,11 +27,12 @@ const QBt_u = () => {
   const [flagValues, setFlagValues] = useState<{ [key: number]: string }>({}); // 各カードのFlag値を保存
   const [cards,setcards] = useState<Card[]>([]);
   const router = useRouter();
-
+  // 仮の数値
+  const contestID = 1
   useEffect(() => {
     const fetchAPI = async () => {
       try {
-        const response = await fetch('http://localhost/question/1', {
+        const response = await fetch('http://localhost/contest/' + contestID, {
           method: 'GET',
           credentials: 'include', // クッキーを含める
         });
@@ -45,11 +46,12 @@ const QBt_u = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data:  any[] = await response.json();
-        const transformedData: Card[]  = data.map(item => ({
+        const transformedData: Card[]  = data.questions.map(item => ({
           id : item.id,
           text: item.name,
-          status: item.status,
-          categoryName: item.category_name
+          status: item.point == item.current_point ? "解決" :"未解決",
+          categoryName: item.category_name,
+          point: item.point,
         }));
         console.log(data)
         setcards(transformedData);
@@ -88,9 +90,50 @@ const QBt_u = () => {
     setSelectedCardId(null);
   };
 
-  const handleSubmitFlag = (): void => {
+  const handleSubmitFlag = (id:number): void => {
     if (selectedCardId !== null) {
-      
+      // 
+      const fetchAPI = async () => {
+        try {
+          const request = {
+            "answer": flagValues[id],
+            "question_id":id
+          }
+          const response = await fetch('http://localhost/contest/' + contestID + "/answer", {
+            method: 'POST',
+            credentials: 'include', // クッキーを含める
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request),
+          });
+          console.log(request)
+          console.log(response.status)
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.log(`api error: ${errorData.error}`)
+            if (response.status == 401) {
+              router.push('/Login');
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data:  any[] = await response.json();
+          if(data.correct) {
+            console.log("answer is true")
+          }else {
+            console.log("answer is false")
+          }
+          console.log(data)
+          setcards(transformedData);
+        } catch (err) {
+          // setError('API呼び出し中にエラーが発生しました。');
+        } finally {
+          // setLoading(false);
+        }
+      };
+  
+      fetchAPI(); 
+      // 
       const flag = flagValues[selectedCardId];
       console.log(`Card ID: ${selectedCardId}, Flag: ${flag}`);
       alert(`Flag submitted for Card ${selectedCardId}: ${flag}`);
@@ -99,7 +142,7 @@ const QBt_u = () => {
   };
 
   // 選択されたカードの詳細を取得
-  const selectedCard = CARD_DATA.find((card) => card.id === selectedCardId);
+  const selectedCard = cards.find((card) => card.id === selectedCardId);
 
   return (
     <div className="relative">
@@ -114,7 +157,7 @@ const QBt_u = () => {
 
       {/* カード一覧 */}
       <div className="grid grid-cols-3 gap-6 p-6 bg-[#4fd1c5] min-h-screen">
-        {CARD_DATA.map((card) => (
+        {cards.map((card) => (
          <div
          key={card.id}
          onClick={() => handleCardClick(card.id)}
@@ -139,7 +182,7 @@ const QBt_u = () => {
            {card.text}
          </p>
          <span className="absolute bottom-4 left-4 text-m text-gray-700 font-bold">
-           Point: {card.Point}
+           Point: {card.point}
          </span>
        </div>
        
@@ -188,7 +231,7 @@ const QBt_u = () => {
                 placeholder="フラグを入力してください"
               />
               <button
-                onClick={handleSubmitFlag}
+                onClick={() => handleSubmitFlag(selectedCard.id)}
                 className="ml-4 bg-[#33BBAB] text-white px-6 py-2 rounded-full shadow hover:opacity-90"
               >
                 回答

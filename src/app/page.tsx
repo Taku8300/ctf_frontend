@@ -22,7 +22,7 @@ export default function Page() {
   useEffect(() => {
     const fetchAPI = async () => {
       try {
-        const response = await fetch('http://localhost/contest/contest', {
+        const response = await fetch('http://localhost/contest', {
           method: 'GET',
           credentials: 'include', // クッキーを含める
         });
