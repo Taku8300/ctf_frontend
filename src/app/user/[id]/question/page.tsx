@@ -57,6 +57,9 @@ const QBt_u = () => {
           console.log(`api error: ${errorData.error}`);
           if (response.status === 401) {
             router.push('/Login');
+          }else if (response.status === 403) {
+            alert("どのチームにも所属していません。管理者に参加申請をしてください。")
+            return
           }
           throw new Error(`HTTP error! status: ${response.status}`);
         }

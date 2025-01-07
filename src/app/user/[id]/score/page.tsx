@@ -99,7 +99,7 @@ const User_score: React.FC = () => {
       // 全てのinsert_dateを収集
       const allDatesSet = new Set<string>();
       teams.forEach(team => {
-        if (team.points.length > 0) {
+        if (team.points != null) {
           team.points.forEach(point => {
             allDatesSet.add(point.insert_date);
           });
@@ -122,7 +122,7 @@ const User_score: React.FC = () => {
       });
 
       teams.forEach(team => {
-        if (team.points.length === 0) {
+        if (team.points === null) {
           // pointsが空の場合、全て0がすでに設定されている
           return;
         }

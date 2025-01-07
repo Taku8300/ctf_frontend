@@ -16,7 +16,7 @@ function Tournament({ number, title, startDate, endDate }) {
 
   const handleClick = () => {
     if (isOngoing) {
-      router.push(`/User_question`); // 開催中のトーナメントページ
+      router.push(`/user/${number}/question`); // 開催中のトーナメントページ
     } else if (isUpcoming) {
       router.push(`/comingsoon`); // 開催予定のトーナメントページ
     } else {

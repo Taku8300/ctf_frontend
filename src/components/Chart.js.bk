@@ -1,6 +1,6 @@
 "use client"; // クライアントコンポーネントとしてマーク
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 
 // 時間をフォーマットする関数
@@ -8,23 +8,35 @@ const formatTime = (timeString) => {
   const date = new Date(timeString);
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${hours}:${minutes}`;
+  return ${hours}:${minutes};
 };
 
-// // チームごとの色を定義
-// const teamColors = {
-//   チーム1: '#8884d8',
-//   チーム2: '#82ca9d',
-//   チーム3: '#ffc658',
-//   チーム4: '#ff7300',
-// };
+// データベースからチームデータを取得する関数（仮データ）
+const fetchTeamData = async () => {
+  return [
+    { name: formatTime('2024-11-10T08:00:00'), チーム1: 100, チーム2: 150, チーム3: 400, チーム4: 300  },
+    { name: formatTime('2024-11-11T09:00:00'), チーム1: 200, チーム2: 132, チーム3: 510, チーム4: 400  },
+    { name: formatTime('2024-11-12T10:00:00'), チーム1: 300, チーム2: 234, チーム3: 690, チーム4: 500  },
+    { name: formatTime('2024-11-10T11:00:00'), チーム1: 400, チーム2: 250, チーム3: 700, チーム4: 600  },
+    { name: formatTime('2024-11-11T12:00:00'), チーム1: 500, チーム2: 252, チーム3: 810, チーム4: 700  },
+    { name: formatTime('2024-11-12T13:00:00'), チーム1: 600, チーム2: 284, チーム3: 990, チーム4: 800  },
+  ];
+};
 
-const Chart = ({ data }) => {
-  // data が配列であることを確認し、そうでなければ空配列を使用
-  const safeData = Array.isArray(data) ? data : [];
+const Chart = () => {
+  const [data, setData] = useState([]);
 
-  // 最新のスコアを取得
-  const latestScores = safeData.length > 0 ? safeData[safeData.length - 1] : {};
+  // データベースからチーム情報を取得
+  useEffect(() => {
+    const loadTeamData = async () => {
+      const fetchedData = await fetchTeamData();
+      setData(fetchedData);
+    };
+    loadTeamData();
+  }, []);
+
+  // 最新のスコアを取得する関数
+  const latestScores = data.length > 0 ? data[data.length - 1] : {};
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -33,8 +45,8 @@ const Chart = ({ data }) => {
         <div className="text-xl text-white ml-2">（各チーム）</div>
       </div>
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={safeData} className="bg-white p-6 rounded-lg shadow-lg">
-          {Object.keys(safeData[0] || {}).filter(key => key !== "name").map((team) => (
+        <LineChart data={data} className="bg-white p-6 rounded-lg shadow-lg">
+          {Object.keys(data[0] || {}).filter(key => key !== "name").map((team) => (
             <Line
               key={team}
               type="monotone"
@@ -72,6 +84,7 @@ const Chart = ({ data }) => {
           ))}
         </tbody>
       </table>
+
     </div>
   );
 }

@@ -1,31 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
-import Header from "../../components/Admin_header";
-import Select from "react-select"; // Import React Select
+import React, { useEffect,useState ,useRef} from "react";
+import Header from "@/components/Admin_header";
+import { useParams } from 'next/navigation';
+import AdminHeader from "@/components/AdminHeader";
 
 const Edit_member = () => {
+  const params = useParams();
+  const { id } = params; // 動的ルートパラメータを取得
+  console.log("fjewaiojfopewa")
+
+  const [inputValue, setInputValue] = useState('');
+  const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const dropdownRef = useRef(null);
+
+  const options = [
+    'アップル',
+    'バナナ',
+    'チェリー',
+    'デーツ',
+    'エルダーベリー',
+    'フィグ',
+    'グレープ',
+    'ハニークリスプ',
+    // 必要に応じてオプションを追加
+  ];
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+    setIsOptionsVisible(true);
+  };
+
+  const handleOptionClick = (option) => {
+    setInputValue(option);
+    setSelectedOption(option);
+    setIsOptionsVisible(false);
+  };
+    // フィルタリングされたオプションを取得
+    const filteredOptions = options.filter(option =>
+      option.toLowerCase().includes(inputValue.toLowerCase())
+    );
+
+
   const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // 新規チーム登録用ポップアップ
   const [isViewPopupOpen, setIsViewPopupOpen] = useState(false); // チーム詳細表示用ポップアップ
   const [teams, setTeams] = useState([
-    { name: "山崎組", members: ["yamazaki@gmail.com", "yama"] },
-    { name: "木村組", members: ["kimura@gmail.com", "kimu"] },
-    { name: "岸本組", members: ["kishimoto@gmail.com", "kishi"] },
+    { name: "山崎組", members: ["yamazaki@gmail", "yama"] },
+    { name: "木村組", members: ["kimura@gmail", "kimu"] },
+    { name: "岸本組", members: ["kishimoto@gmail", "kishi"] },
   ]);
   const [selectedTeam, setSelectedTeam] = useState(null); // 選択されたチーム
   const [newTeamName, setNewTeamName] = useState("");
   const [newMembers, setNewMembers] = useState([]);
-  const [currentMember, setCurrentMember] = useState(null); // Changed to store selected option
-
-  // 仮のユーザーリスト（実際にはAPIから取得することを想定）
-  const allUsers = [
-    { value: "yamazaki@gmail.com", label: "yamazaki@gmail.com" },
-    { value: "kimura@gmail.com", label: "kimura@gmail.com" },
-    { value: "kishimoto@gmail.com", label: "kishimoto@gmail.com" },
-    { value: "suzuki@gmail.com", label: "suzuki@gmail.com" },
-    { value: "tanaka@gmail.com", label: "tanaka@gmail.com" },
-    // 他のユーザーもここに追加
-  ];
+  const [currentMember, setCurrentMember] = useState("");
 
   // 新規登録ポップアップの開閉
   const handleAddClick = () => setIsAddPopupOpen(true);
@@ -33,7 +60,7 @@ const Edit_member = () => {
     setIsAddPopupOpen(false);
     setNewTeamName("");
     setNewMembers([]);
-    setCurrentMember(null);
+    setCurrentMember("");
   };
 
   // チーム詳細ポップアップの開閉
@@ -48,14 +75,9 @@ const Edit_member = () => {
 
   // 新しいメンバー追加
   const handleAddMember = () => {
-    if (currentMember) {
-      // Prevent adding duplicate members
-      if (!newMembers.includes(currentMember.value)) {
-        setNewMembers((prev) => [...prev, currentMember.value]);
-        setCurrentMember(null);
-      } else {
-        alert("このメンバーは既に追加されています。");
-      }
+    if (currentMember.trim()) {
+      setNewMembers((prev) => [...prev, currentMember.trim()]);
+      setCurrentMember("");
     }
   };
 
@@ -83,9 +105,12 @@ const Edit_member = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <div className="flex flex-wrap justify-center items-center bg-teal-400 p-8 gap-4 mt-5">
+    <div className="h-screen bg-gray-100">
+      <AdminHeader contestID={id} isTop={false}/>
+
+      <div className="flex flex-wrap justify-center items-center bg-gray-100 p-8 gap-4 mt-5">
+
+ 
         {/* 各チームのカード */}
         {teams.map((team, index) => (
           <div
@@ -95,9 +120,7 @@ const Edit_member = () => {
           >
             <h2 className="text-xl font-bold mb-2">{team.name}</h2>
             {team.members.map((member, idx) => (
-              <p key={idx} className="text-sm text-gray-600">
-                {member}
-              </p>
+              <p key={idx} className="text-sm text-gray-600">{member}</p>
             ))}
           </div>
         ))}
@@ -136,41 +159,64 @@ const Edit_member = () => {
                   placeholder="チーム名"
                 />
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-full">
-                    <Select
-                      value={currentMember}
-                      onChange={setCurrentMember}
-                      options={allUsers}
-                      placeholder="メンバーを検索..."
-                      isClearable
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={currentMember}
+                    onChange={(e) => setCurrentMember(e.target.value)}
+                    className="w-full border rounded-lg p-2"
+                    placeholder="メンバー名"
+                  />
                   <button
                     onClick={handleAddMember}
                     className="bg-teal-400 text-white px-4 py-2 rounded-lg"
-                    disabled={!currentMember}
-                    title={
-                      currentMember
-                        ? "メンバーを追加"
-                        : "メンバーを選択してください"
-                    }
                   >
-                    ＋
+                    ✙
                   </button>
                 </div>
+
+                {/* 追加************************ */}
+      <div  ref={dropdownRef}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          onFocus={() => setIsOptionsVisible(true)}
+          placeholder="選択または検索..."
+        />
+        {isOptionsVisible && (
+          <div >
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleOptionClick(option)}
+                >
+                  {option}
+                </div>
+              ))
+            ) : (
+              <div >該当するオプションがありません</div>
+            )}
+          </div>
+        )}
+      </div>
+      {selectedOption && (
+        <div>
+          選択されたオプション: <strong>{selectedOption}</strong>
+        </div>
+      )}
+                {/* 追加************************ */}
+
                 <div>
                   {newMembers.map((member, idx) => (
-                    <p
-                      key={idx}
-                      className="inline-block bg-gray-200 rounded-lg px-2 py-1 mr-2 mb-2"
-                    >
+                    <p key={idx} className="inline-block bg-gray-200 rounded-lg px-2 py-1 mr-2 mb-2">
                       {member}
                     </p>
                   ))}
                 </div>
                 <button
                   onClick={handleRegister}
-                  className="bg-teal-400 text-white px-4 py-2 rounded-lg mt-4 w-full"
+                  className="bg-teal-400 text-white px-4 py-2 rounded-lg"
                 >
                   登録
                 </button>
@@ -187,34 +233,34 @@ const Edit_member = () => {
               onClick={closeViewPopup}
             ></div>
             <div className="fixed inset-0 flex justify-center items-center z-20">
-              <div className="bg-white w-96 max-h-[80vh] overflow-y-auto rounded-xl shadow-xl p-6 pb-16 relative">
-                <button
-                  className="absolute top-4 right-4 text-gray-600 text-xl"
-                  onClick={closeViewPopup}
-                >
-                  ×
-                </button>
-                <h2 className="text-lg font-bold text-gray-700 mb-4">
-                  {selectedTeam.name}
-                </h2>
-                <div>
-                  {selectedTeam.members.map((member, idx) => (
-                    <p
-                      key={idx}
-                      className="bg-gray-100 rounded-lg px-2 py-1 mb-2"
+                <div className="bg-white w-96 max-h-[80vh] overflow-y-auto rounded-xl shadow-xl p-6 pb-16 relative">
+                    <button
+                    className="absolute top-4 right-4 text-gray-600 text-xl"
+                    onClick={closeViewPopup}
                     >
-                      {member}
-                    </p>
-                  ))}
+                    ×
+                    </button>
+                    <h2 className="text-lg font-bold text-gray-700 mb-4">
+                    {selectedTeam.name}
+                    </h2>
+                    <div>
+                    {selectedTeam.members.map((member, idx) => (
+                        <p
+                        key={idx}
+                        className="bg-gray-100 rounded-lg px-2 py-1 mb-2"
+                        >
+                        {member}
+                        </p>
+                    ))}
+                    </div>
+                    <button
+                    onClick={handleDeleteTeam}
+                    className="bg-red-400 text-white px-4 py-2 rounded-lg absolute bottom-4 right-4"
+                    >
+                    チームを削除
+                    </button>
                 </div>
-                <button
-                  onClick={handleDeleteTeam}
-                  className="bg-red-400 text-white px-4 py-2 rounded-lg absolute bottom-4 right-4"
-                >
-                  チームを削除
-                </button>
-              </div>
-            </div>
+                </div>
           </>
         )}
       </div>

@@ -2,26 +2,53 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "../../components/Admin_header";
+import Header from "@/components/Admin_header";
+import { useSearchParams } from 'next/navigation';
+
+interface Templates {
+  id: number;
+  status: string;
+  title: string
+  text: string;
+  categoryName: string
+  point: number,
+}
+interface Question{
+  id: number; title: string; text: string; score?: string 
+}
+interface JsonReq {
+  qid:number,
+  point:number
+}
 
 const Question_temp = () => {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const [templates, setTemplates] = useState([
-    { id: 1, status: '解決', title: '大量Pod問題', text: 'kubernetesの中にpod大量発生！！！！', Point: '10' },
-    { id: 2, status: '未解決', title: 'スケール問題', text: 'podのスケールが壊れた！どうしよう！', Point: '10' },
-    { id: 3, status: '解決', title: 'ノード不足', text: 'ノード不足でクラッシュしたけど直したよ！', Point: '10' },
-    { id: 4, status: '解決', title: '新サービス', text: 'kubernetesで新しいサービス作成中！', Point: '10' },
-    { id: 5, status: '未解決', title: '負荷テスト', text: '負荷テスト中にエラー発生！', Point: '10' },
-    { id: 6, status: '解決', title: 'デプロイ成功', text: 'デプロイに成功しました！', Point: '10' },
-  ]);
+  const [templates,setTemplates] = useState<Templates[]>([]);
+  const contestID = 1 //仮置き
+  // const [templates, setTemplates] = useState([
+  //   { id: 1, status: '解決', title: '大量Pod問題', text: 'kubernetesの中にpod大量発生！！！！', Point: '10' },
+  //   { id: 2, status: '未解決', title: 'スケール問題', text: 'podのスケールが壊れた！どうしよう！', Point: '10' },
+  //   { id: 3, status: '解決', title: 'ノード不足', text: 'ノード不足でクラッシュしたけど直したよ！', Point: '10' },
+  //   { id: 4, status: '解決', title: '新サービス', text: 'kubernetesで新しいサービス作成中！', Point: '10' },
+  //   { id: 5, status: '未解決', title: '負荷テスト', text: '負荷テスト中にエラー発生！', Point: '10' },
+  //   { id: 6, status: '解決', title: 'デプロイ成功', text: 'デプロイに成功しました！', Point: '10' },
+  // ]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newTemplate, setNewTemplate] = useState({
+    ID:"",
     title: "",
     text: "",
+    os:"",
     ip: "",
+    gateway:"",
+    cpu:"",
+    memory:"",
+    disk:"",
+    category_id:"",
     ssh: "",
     user: "",
     pass: "",
@@ -43,17 +70,45 @@ const Question_temp = () => {
     setModalContent(null);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const selectedTemplates = templates.filter((t) => selectedIds.includes(t.id));
+    const jsonParam: JsonReq[] = []
+    selectedIds.forEach((e) => {
+      jsonParam.push({qid: e, point: 1})
+    })
+    console.log(JSON.stringify({ jsonParam }))
+    try {
+      const response = await fetch('http://localhost/contest/' + contestID + '/question' , {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // クッキーを含める
+        body: JSON.stringify( jsonParam ),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`: ${errorData.error}`);
+        return;
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error('quesionの追加に失敗しました:', error);
+      alert('quesionの追加に失敗しました');
+    }
     localStorage.setItem("selectedTemplates", JSON.stringify(selectedTemplates));
     router.push("/Edit_question");
   };
 
   const validateInputs = () => {
     const ipRegex = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
+    const ipWithCidrRegex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\/([0-2]?\d|3[0-2]))?$/;
+
+
     const noHiraganaRegex = /^[^\u3040-\u309F]*$/;
 
-    if (!ipRegex.test(newTemplate.ssh)) {
+    if (!ipWithCidrRegex.test(newTemplate.ip) || newTemplate.ip == "") {
       alert("有効なIPアドレスを入力してください。");
       return false;
     }
@@ -64,16 +119,100 @@ const Question_temp = () => {
     return true;
   };
 
-  const handleAddTemplate = () => {
+  const handleAddTemplate = async () => {
     if (!validateInputs()) return;
 
+    try {
+      const response = await fetch('http://localhost/question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // クッキーを含める
+        body: JSON.stringify( {
+            ID: parseInt(newTemplate.ID),
+            name:newTemplate.title,
+            category_id:parseInt(newTemplate.category_id),
+            description:newTemplate.text,
+            memory:parseInt(newTemplate.memory) * 1024,
+            cpu:parseInt(newTemplate.cpu),
+            disk:parseInt(newTemplate.disk),
+            ip:newTemplate.ip,
+            gateway:newTemplate.gateway,
+            username:newTemplate.user,
+            password:newTemplate.pass,
+            sshkeys:[newTemplate.ssh]      
+        } ),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`: ${errorData.error}`);
+        return;
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error('quesion作成に失敗しました:', error);
+      alert('quesion作成に失敗しました');
+    }
     const newId = templates.length + 1;
     setTemplates((prev) => [...prev, { id: newId, status: "未解決", ...newTemplate }]);
-    setNewTemplate({ title: "", text: "", Point: "10", ssh: "", user: "", pass: "" });
+    // setNewTemplate({ title: "", text: "", Point: "10", ssh: "", user: "", pass: "" });
     setIsAddModalOpen(false);
   };
 
   useEffect(() => {
+    const getQuestions = async () => {
+      try {
+        const response = await fetch('http://localhost/question', {
+          method: 'GET',
+          credentials: 'include', // クッキーを含める
+        });
+        console.log(response.status)
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.log(`api error: ${errorData.error}`)
+          if (response.status == 401) {
+            router.push('/Login');
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data:  any[] = await response.json();
+        // { id: 2, status: '未解決', title: 'スケール問題', text: 'podのスケールが壊れた！どうしよう！', Point: '10' },
+
+        const transformedData: Templates[]  = data.map(item => ({
+          id: item.id,
+          title: item.name,
+          status: item.status,
+          text: item.description,
+          categoryName:item.category_name,
+          point: item.point,
+        }));
+        console.log(data)
+        setTemplates(transformedData);
+      } catch (err) {
+        // setError('API呼び出し中にエラーが発生しました。');
+      } finally {
+        // setLoading(false);
+      }
+    };
+    getQuestions();
+    const dataParam = searchParams.get('data');
+    if (dataParam) {
+      try {
+        // JSON文字列をデコードしてオブジェクトに戻す
+        const parsedData: Question[] = JSON.parse(decodeURIComponent(dataParam));
+        const quesids:number[] = []
+        parsedData.forEach(e => {
+          quesids.push(e.id)
+        });
+        setSelectedIds(quesids)
+
+      } catch (error) {
+        console.error('データのパースエラー:', error);
+      }
+
+    }
     const storedTemplates = localStorage.getItem("selectedTemplates");
     if (storedTemplates) {
       console.log("Selected Templates:", JSON.parse(storedTemplates));
@@ -192,11 +331,53 @@ const Question_temp = () => {
               className="w-full mb-4 p-2 border rounded-lg"
               rows={4}
             />
+           <input
+              type="text"
+              placeholder="カテゴリ"
+              value={newTemplate.category_id}
+              onChange={(e) => setNewTemplate({ ...newTemplate, category_id: e.target.value })}
+              className="w-full mb-4 p-2 border rounded-lg"
+            />
             <input
               type="text"
-              placeholder="IPアドレス"
+              placeholder="os(今はVMID)"
+              value={newTemplate.os}
+              onChange={(e) => setNewTemplate({ ...newTemplate, os: e.target.value })}
+              className="w-full mb-4 p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="コア数"
+              value={newTemplate.cpu}
+              onChange={(e) => setNewTemplate({ ...newTemplate, cpu: e.target.value })}
+              className="w-full mb-4 p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="メモリ(GB)"
+              value={newTemplate.memory}
+              onChange={(e) => setNewTemplate({ ...newTemplate, memory: e.target.value })}
+              className="w-full mb-4 p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="disk(GB)"
+              value={newTemplate.disk}
+              onChange={(e) => setNewTemplate({ ...newTemplate, disk: e.target.value })}
+              className="w-full mb-4 p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="IPアドレス(空の場合dhcp)"
               value={newTemplate.ip}
               onChange={(e) => setNewTemplate({ ...newTemplate, ip: e.target.value })}
+              className="w-full mb-4 p-2 border rounded-lg"
+            />
+            <input
+              type="text"
+              placeholder="デフォルトゲートウェイ(空の場合dhcp)"
+              value={newTemplate.gateway}
+              onChange={(e) => setNewTemplate({ ...newTemplate, gateway: e.target.value })}
               className="w-full mb-4 p-2 border rounded-lg"
             />
             <input

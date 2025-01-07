@@ -1,6 +1,6 @@
 // pages/Score_u.js
-import Chart from "../../components/Chart";
-import Header from "../../components/Archive_Header"; // Headerコンポーネントをインポート
+import Chart from "@/components/Chart";
+import Header from "@/components/Archive_Header"; // Headerコンポーネントをインポート
 
 
 const User_score = () => {

@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
+    "date-fns": "^4.1.0",
     "next": "15.0.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.28.0",
+    "react-select": "^5.9.0",
     "recharts": "^2.13.3"
   },
   "devDependencies": {

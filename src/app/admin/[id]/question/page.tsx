@@ -4,8 +4,15 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Admin_header";
 import { stringify } from 'querystring';
+import { useParams,usePathname } from 'next/navigation';
+import AdminHeader from "@/components/AdminHeader";
 
 const Edit_question = () => {
+  const params = useParams();
+  const { id } = params; // 動的ルートパラメータを取得
+  const path = usePathname()
+
+
   const router = useRouter();
   const [questions, setQuestions] = useState<
     { id: number; title: string; text: string; score?: string }[]
@@ -15,7 +22,6 @@ const Edit_question = () => {
     { id: number; title: string; text: string; score?: string } | null
   >(null);
   const [score, setScore] = useState("");
-  const contestID = 1 
 
   useEffect(() => {
     // const storedQuestions = localStorage.getItem("selectedTemplates");
@@ -26,9 +32,12 @@ const Edit_question = () => {
     // }
     const getQuestion = async () => {
       try {
-        const response = await fetch('http://localhost/contest/' + contestID, {
+        const response = await fetch('http://localhost/contest/' + id, {
           method: 'GET',
           credentials: 'include', // クッキーを含める
+          headers: {
+            "X-Frontend-Path": path,
+          },
         });
         console.log(response.status)
         if (!response.ok) {
@@ -63,7 +72,7 @@ const Edit_question = () => {
   };
   const toQuestionTemp = () => {
     const serializedData = encodeURIComponent(JSON.stringify(questions));
-    router.push(`/Question_temp?data=${serializedData}`);
+    router.push(`/admin/${id}/addquestion?data=${serializedData}`);
   }
 
   const handleScoreSubmit = async () => {
@@ -72,7 +81,7 @@ const Edit_question = () => {
         q.id === modalContent.id ? { ...q, score } : q
       );
       try {
-        const response = await fetch('http://localhost/contest/' + contestID + '/question/' + modalContent.id , {
+        const response = await fetch('http://localhost/contest/' + id + '/question/' + modalContent.id , {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -99,10 +108,12 @@ const Edit_question = () => {
 
   return (
     <div>
-      <Header />
-      <div className="flex flex-wrap justify-center items-center bg-teal-400 p-8 gap-4 mt-5">
+      <AdminHeader contestID={id} isTop={false}/>
+      {/* <div className=""> */}
+      <div className="flex flex-wrap justify-center items-center p-8 gap-4 mt-5 min-h-screen bg-gray-100">
+
         <div
-          className="grid grid-cols-3 gap-40 p-10 bg-[#4fd1c5] min-h-screen"
+          className="grid grid-cols-3 gap-40 p-10  min-h-screen"
           style={{ rowGap: "20px" }}
         >
           {questions.map((card, index) => (

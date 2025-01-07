@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from "@/components/Header";
 
-const Login = () => {
+const Signup = () => {
   const [showPopup,] = useState(true); // ポップアップ表示のトリガー
 
   function LoginPopup() {
     const router = useRouter();
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
+    const [password, setName] = useState('');
 
     const handleLogin = async () => {
       // ログイン処理
@@ -34,7 +33,7 @@ const Login = () => {
           const data = await response.json();
           localStorage.setItem('hasLoggedIn', 'true');
           // ログイン成功後にリダイレクト
-          router.push('/admin_wel');
+          router.push('/');
         } catch (error) {
           console.error('ログインエラー:', error);
           alert('ログイン中にエラーが発生しました');
@@ -59,13 +58,13 @@ const Login = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">password</label>
+            <label className="block text-gray-700">Name</label>
             <input
-              type="password"
+              type="text"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-              placeholder="Enter password"
+              placeholder="Enter your name"
             />
           </div>
           <button
@@ -73,12 +72,6 @@ const Login = () => {
             className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             Login
-          </button>
-          <button
-            onClick={() => {router.push("/Signup")}}
-            className="w-full py-2 bg-blue-300 text-white rounded-md hover:bg-blue-400 mt-5"
-          >
-            新規登録
           </button>
         </div>
       </div>

@@ -20,15 +20,15 @@ const Header = () => {
   };
 
   const navigateToScore = () => {
-    router.push('/User_score'); // 遷移先のパス
+    router.push('/user/score'); // 遷移先のパス
   };
 
   const navigateToTop = () => {
-    router.push('/'); // 遷移先のパス
+    router.push('/user'); // 遷移先のパス
   };
 
   const navigateToQuestion = () => {
-    router.push('/User_question'); // 遷移先のパス
+    router.push('/user/question'); // 遷移先のパス
   };
 
   const handleLogout = () => {
@@ -37,7 +37,7 @@ const Header = () => {
   };
 
   // パスが root の場合、非表示にするフラグ
-  const shouldHideMenu = pathname === '/';
+  const shouldHideMenu = pathname === '/user';
 
   return (
     <div className="w-full bg-red-50"> {/* 全幅を指定 */}

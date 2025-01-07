@@ -6,7 +6,7 @@ import User from '../../public/user.svg';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 
-const Admin_header = () => {
+const Admin_header = ({ contestID }) => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const router = useRouter();
   const pathname = usePathname(); // 現在のパスを取得
@@ -28,11 +28,11 @@ const Admin_header = () => {
   };
 
   const navigateToQuestion = () => {
-    router.push('/Edit_question'); // 遷移先のパス
+    router.push(`/admin${contestID}/question`); // 遷移先のパス
   };
 
   const navigateToMember = () => {
-    router.push('/Edit_member'); // 遷移先のパス
+    router.push(`/admin${contestID}/question`); // 遷移先のパス
   };
 
   const handleLogout = () => {
